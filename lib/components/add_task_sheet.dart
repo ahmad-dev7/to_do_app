@@ -35,12 +35,8 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
   TextEditingController aboutController = TextEditingController();
   FocusNode headingFocus = FocusNode();
   FocusNode aboutFocus = FocusNode();
-  String pickedDate = DateFormat('E, d MMM').format(DateTime.now());
-  String pickedTime = DateFormat('hh:mm a').format(
-    DateTime.now().add(
-      const Duration(hours: 2),
-    ),
-  );
+  String pickedDate = '';
+  String pickedTime = '';
 
   @override
   void initState() {
@@ -122,7 +118,9 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
                                   ),
                                 );
                               },
-                              label: pickedDate,
+                              label: pickedDate.isNotEmpty
+                                  ? pickedDate
+                                  : 'Due date',
                               isPicked: isDatePicked,
                               iconData: Icons.calendar_month,
                             ),
@@ -153,7 +151,9 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
                                   ),
                                 );
                               },
-                              label: pickedTime,
+                              label: pickedTime.isNotEmpty
+                                  ? pickedTime
+                                  : 'Due time',
                               isPicked: isTimePicked,
                               iconData: Icons.av_timer,
                             ),
@@ -174,7 +174,9 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
                           onTap: () {
                             //* Check if input fields are nto empty
                             if (headingController.text.isNotEmpty &&
-                                aboutController.text.isNotEmpty) {
+                                aboutController.text.isNotEmpty &&
+                                pickedTime.isNotEmpty &&
+                                pickedDate.isEmpty) {
                               int id =
                                   taskBox.isEmpty ? 0 : taskCount.keys.last + 1;
                               TaskServices()
@@ -199,6 +201,12 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
                                   );
                                 },
                               );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('All fields are required'),
+                                ),
+                              );
                             }
                           },
                         ),
@@ -214,21 +222,24 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
                   duration: const Duration(milliseconds: 300),
                 ),
             //* To-Do icon placed at top
-            Align(
-              alignment: AlignmentDirectional.topCenter,
-              child: SimpleShadow(
-                offset: const Offset(5, 5),
-                color: Colors.black,
-                sigma: 8,
-                child: Image.asset(
-                  'images/list_icon.png',
-                  height: 100,
-                ),
-              )
-                  .animate()
-                  .fade(delay: const Duration(milliseconds: 400))
-                  .then()
-                  .shake(),
+            Positioned.fill(
+              top: -10,
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: SimpleShadow(
+                  offset: const Offset(10, 8),
+                  color: Colors.black,
+                  sigma: 8,
+                  child: Image.asset(
+                    'images/list_icon.png',
+                    height: 100,
+                  ),
+                )
+                    .animate()
+                    .fade(delay: const Duration(milliseconds: 400))
+                    .then()
+                    .shake(),
+              ),
             ),
           ],
         ),

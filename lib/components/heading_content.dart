@@ -19,87 +19,43 @@ class HeadingContent extends StatelessWidget {
           margin: const EdgeInsets.only(bottom: 12),
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
           decoration: BoxDecoration(
-            color: const Color(0xF6FFFFFF),
+            color: const Color(0xE1FFFFFF),
             borderRadius: BorderRadius.circular(15),
           ),
           child: Wrap(
             alignment: WrapAlignment.center,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              const Text('Hey,'),
+              const Text('Hello,'),
               const SizedBox(width: 5),
               Text(
                 userName,
                 style: style(
                   size: 18,
                   weight: FontWeight.w500,
-                  color: const Color(0xff313638),
+                  color: const Color(0xFF000000),
                 ),
               ),
             ],
           ),
         ),
-
         Text(
           'Completed your task ?!?!',
           style: style(
             size: 18,
             weight: FontWeight.w500,
-            letterSpacing: 5,
-            color: Colors.white70,
+            letterSpacing: 2,
+            color: const Color(0xE1FFFFFF),
           ),
         ),
-
         ListTile(
-          contentPadding: const EdgeInsets.only(),
-          title: Text('Today', style: style(weight: FontWeight.bold, size: 22)),
-          subtitle: Text(today, style: style()),
+          contentPadding: const EdgeInsets.all(0),
+          title: Text('Today', style: style(weight: FontWeight.w200, size: 22)),
+          subtitle: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 2),
+            child: Text(today, style: style(weight: FontWeight.w400)),
+          ),
         )
-
-        // RichText(
-        //   text: TextSpan(
-        //     text: 'Hey, ',
-        //     style: style(size: 19, color: Colors.grey[400]),
-        //     children: [
-        //       TextSpan(
-        //         text: userName,
-        //         style: style(
-        //           color: Colors.grey[300],
-        //           weight: FontWeight.w500,
-        //           size: 20,
-        //           letterSpacing: 0,
-        //         ),
-        //       ),
-        //     ],
-        //   ),
-        // ),
-        // Text(
-        //   'Completed your tasks !!!',
-        //   style: style(
-        //     size: 19,
-        //     color: Colors.grey[400],
-        //     wordSpacing: 3,
-        //     letterSpacing: 2,
-        //   ),
-        // ),
-        // const SizedBox(),
-        // Text(
-        //   'Today',
-        //   style: style(
-        //     color: Colors.grey[300],
-        //     size: 20,
-        //     weight: FontWeight.w600,
-        //     letterSpacing: 0,
-        //   ),
-        // ),
-        // Text(
-        //   today,
-        //   style: style(
-        //     color: Colors.grey[400],
-        //     wordSpacing: 3,
-        //     weight: FontWeight.w500,
-        //     size: 14,
-        //   ),
-        // ),
       ],
     ).animate().slideX();
   }
@@ -118,7 +74,7 @@ TextStyle style({
     letterSpacing: letterSpacing,
     decoration: decoration,
     decorationColor: Colors.grey[500],
-    color: color ?? const Color(0xF5FFFFFF),
+    color: color ?? const Color(0xFFFFFFFF),
     fontSize: size ?? 14,
     fontWeight: weight ?? FontWeight.w400,
   );
