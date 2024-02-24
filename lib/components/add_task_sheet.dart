@@ -166,17 +166,17 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         // Cancel button
-                        const DialogButton(label: 'Cancel'),
+                        const DialogButton(
+                            label: 'Cancel', color: Colors.white10),
                         const SizedBox(width: 40),
                         //! Add/Edit button
                         DialogButton(
                           label: widget.btnLabel ?? 'Add',
+                          color:
+                              isFieldsCompleted() ? Colors.blue : Colors.grey,
                           onTap: () {
                             //* Check if input fields are nto empty
-                            if (headingController.text.isNotEmpty &&
-                                aboutController.text.isNotEmpty &&
-                                pickedTime.isNotEmpty &&
-                                pickedDate.isEmpty) {
+                            if (isFieldsCompleted()) {
                               int id =
                                   taskBox.isEmpty ? 0 : taskCount.keys.last + 1;
                               TaskServices()
@@ -202,11 +202,7 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
                                 },
                               );
                             } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('All fields are required'),
-                                ),
-                              );
+                              showAlert();
                             }
                           },
                         ),
@@ -227,9 +223,9 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
               child: Align(
                 alignment: Alignment.topCenter,
                 child: SimpleShadow(
-                  offset: const Offset(10, 8),
+                  offset: const Offset(10, 10),
                   color: Colors.black,
-                  sigma: 8,
+                  sigma: 10,
                   child: Image.asset(
                     'images/list_icon.png',
                     height: 100,
@@ -241,10 +237,41 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
                     .shake(),
               ),
             ),
+            //* Alert add action if fields are not completed
+            Center(
+              child: Visibility(
+                visible: alert,
+                child: const Chip(
+                  label: Text('Please complete all fields'),
+                  labelStyle: TextStyle(color: Colors.white),
+                  backgroundColor: Colors.black54,
+                ).animate().fade(),
+              ),
+            ),
           ],
         ),
       ),
     );
+  }
+
+  bool alert = false;
+  //* Show alert on add action if fields are not completed
+  void showAlert() {
+    setState(() => alert = true);
+    Future.delayed(const Duration(seconds: 2))
+        .then((value) => setState(() => alert = false));
+  }
+
+  //* Check if the all fields are filed or not
+  bool isFieldsCompleted() {
+    if (headingController.text.isNotEmpty &&
+        aboutController.text.isNotEmpty &&
+        pickedTime.isNotEmpty &&
+        pickedDate.isNotEmpty) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   //* Converts picked time in HH:MM AM/PM format

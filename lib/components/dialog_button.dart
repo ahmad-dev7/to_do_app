@@ -16,15 +16,15 @@ class DialogButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialButton(
-      elevation: 1,
-      color: label != 'Cancel' ? color ?? Colors.blue : Colors.grey[400],
+      elevation: 0,
+      color: color ?? Colors.grey[400],
       onPressed: onTap ?? () => Navigator.pop(context),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: icon ??
           Text(
             label!,
-            style: const TextStyle(
-              color: Colors.white,
+            style: TextStyle(
+              color: label == 'Cancel' ? Colors.black : Colors.white,
               fontSize: 14,
             ),
           ),

@@ -64,10 +64,7 @@ class _StyledTextFieldState extends State<StyledTextField> {
             ),
           ),
           hintText: widget.hint,
-          hintStyle: const TextStyle(
-            color: Color(0xFF686868),
-            fontSize: 13,
-          ),
+          hintStyle: const TextStyle(color: Color(0xFF686868), fontSize: 15),
         ),
       ),
     );
