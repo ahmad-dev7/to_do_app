@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
-class EmptyTaskMessage extends StatelessWidget {
+class EmptyTask extends StatelessWidget {
   final String? msg;
-  const EmptyTaskMessage({super.key, this.msg});
+  const EmptyTask({super.key, this.msg});
 
   @override
   Widget build(BuildContext context) {

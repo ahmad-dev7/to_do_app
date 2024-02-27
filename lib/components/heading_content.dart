@@ -32,7 +32,7 @@ class HeadingContent extends StatelessWidget {
                 userName,
                 style: style(
                   size: 18,
-                  weight: FontWeight.w500,
+                  weight: FontWeight.w400,
                   color: const Color(0xFF000000),
                 ),
               ),
@@ -43,7 +43,7 @@ class HeadingContent extends StatelessWidget {
           'Completed your task ?!?!',
           style: style(
             size: 18,
-            weight: FontWeight.w500,
+            weight: FontWeight.w300,
             letterSpacing: 2,
             color: const Color(0xE1FFFFFF),
           ),

@@ -1,11 +1,14 @@
-import 'dart:ui';
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
-import 'package:simple_shadow/simple_shadow.dart';
+import 'package:to_do/Services/network/image_services.dart';
 import 'package:to_do/Services/task_services.dart';
+import 'package:to_do/components/bottom_sheet_icon.dart';
+import 'package:to_do/components/custom_alert.dart';
 import 'package:to_do/components/date_time_picker_button.dart';
 import 'package:to_do/components/dialog_button.dart';
+import 'package:to_do/components/sheet_container.dart';
 import 'package:to_do/components/styled_textfield.dart';
 import 'package:to_do/model/tasks.dart';
 
@@ -35,6 +38,8 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
   TextEditingController aboutController = TextEditingController();
   FocusNode headingFocus = FocusNode();
   FocusNode aboutFocus = FocusNode();
+  late DateTime date;
+  late TimeOfDay time;
   String pickedDate = '';
   String pickedTime = '';
 
@@ -62,7 +67,7 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
             Align(
               alignment: AlignmentDirectional.bottomCenter,
               //* dialog sheet
-              child: sheetContainer(
+              child: SheetContainer(
                 height: 380,
                 img: 'images/wavy_lines.jpg',
                 child: Column(
@@ -112,8 +117,9 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
                                   (value) => setState(
                                     () {
                                       isDatePicked = true;
+                                      date = value!;
                                       pickedDate =
-                                          DateFormat('E, d MMM').format(value!);
+                                          DateFormat('E, d MMM').format(value);
                                     },
                                   ),
                                 );
@@ -139,13 +145,14 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
                                   context: context,
                                   initialTime: TimeOfDay.fromDateTime(
                                     DateTime.now().add(
-                                      const Duration(hours: 1),
+                                      const Duration(minutes: 1),
                                     ),
                                   ),
                                 ).then(
                                   (value) => setState(
                                     () {
-                                      pickedTime = getTime(value!);
+                                      time = value!;
+                                      pickedTime = getTime(value);
                                       isTimePicked = true;
                                     },
                                   ),
@@ -174,33 +181,15 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
                           label: widget.btnLabel ?? 'Add',
                           color:
                               isFieldsCompleted() ? Colors.blue : Colors.grey,
-                          onTap: () {
+                          onTap: () async {
                             //* Check if input fields are nto empty
                             if (isFieldsCompleted()) {
                               int id =
                                   taskBox.isEmpty ? 0 : taskCount.keys.last + 1;
-                              TaskServices()
-                                  .addTask(
-                                task: Tasks(
-                                  id: widget.id ?? id,
-                                  heading: headingController.text,
-                                  about: aboutController.text,
-                                  date: pickedDate,
-                                  time: pickedTime,
-                                  isDone: false,
-                                ),
-                                isEdit: widget.id == null ? false : true,
-                              )
-                                  .then(
-                                (value) {
-                                  setState(
-                                    () {
-                                      widget.onClose();
-                                      Navigator.pop(context);
-                                    },
-                                  );
-                                },
-                              );
+                              if (isDatePicked && isTimePicked) {
+                                createNotification(id: widget.id ?? id);
+                              }
+                              addTask(id);
                             } else {
                               showAlert();
                             }
@@ -218,40 +207,66 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
                   duration: const Duration(milliseconds: 300),
                 ),
             //* To-Do icon placed at top
-            Positioned.fill(
-              top: -10,
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: SimpleShadow(
-                  offset: const Offset(10, 10),
-                  color: Colors.black,
-                  sigma: 10,
-                  child: Image.asset(
-                    'images/list_icon.png',
-                    height: 100,
-                  ),
-                )
-                    .animate()
-                    .fade(delay: const Duration(milliseconds: 400))
-                    .then()
-                    .shake(),
-              ),
-            ),
-            //* Alert add action if fields are not completed
-            Center(
-              child: Visibility(
-                visible: alert,
-                child: const Chip(
-                  label: Text('Please complete all fields'),
-                  labelStyle: TextStyle(color: Colors.white),
-                  backgroundColor: Colors.black54,
-                ).animate().fade(),
-              ),
-            ),
+            const BottomSheetIcon(),
+            //* Alert on add action if fields are not completed
+            CustomAlert(alert: alert)
           ],
         ),
       ),
     );
+  }
+
+  //! Methods
+
+  //* Add task
+  addTask(int id) {
+    TaskServices()
+        .addTask(
+      task: Tasks(
+        id: widget.id ?? id,
+        heading: headingController.text,
+        about: aboutController.text,
+        date: pickedDate,
+        time: pickedTime,
+        isDone: false,
+      ),
+      isEdit: widget.id == null ? false : true,
+    )
+        .then(
+      (value) {
+        setState(
+          () {
+            widget.onClose();
+            Navigator.pop(context);
+          },
+        );
+      },
+    );
+  }
+
+  //* Create notification
+  createNotification({required int id}) async {
+    String imagePath = await ImageServices.fetchImageUrl();
+    final DateTime scheduleDateTime =
+        DateTime(date.year, date.month, date.day, time.hour, time.minute);
+    await AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: id,
+        channelKey: 'remindTask',
+        title: headingController.text,
+        body: aboutController.text,
+        roundedLargeIcon: true,
+        category: NotificationCategory.Event,
+        notificationLayout: NotificationLayout.BigPicture,
+        bigPicture: imagePath,
+        payload: {'uuid': 'uuid-test'},
+        autoDismissible: true,
+      ),
+      schedule: NotificationCalendar.fromDate(
+        date: scheduleDateTime,
+      ),
+    );
+    debugPrint('Created notification with id: $id');
   }
 
   bool alert = false;
@@ -259,7 +274,7 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
   void showAlert() {
     setState(() => alert = true);
     Future.delayed(const Duration(seconds: 2))
-        .then((value) => setState(() => alert = false));
+        .whenComplete(() => setState(() => alert = false));
   }
 
   //* Check if the all fields are filed or not
@@ -284,28 +299,4 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
     time += value.hour >= 12 ? ' PM' : ' AM';
     return time;
   }
-}
-
-Container sheetContainer(
-    {required double height, required String img, required Widget child}) {
-  return Container(
-    height: height,
-    padding: const EdgeInsets.symmetric(horizontal: 20),
-    decoration: BoxDecoration(
-      image: DecorationImage(
-          image: AssetImage(img),
-          opacity: 0.2,
-          fit: BoxFit.cover,
-          colorFilter: const ColorFilter.linearToSrgbGamma()),
-      color: const Color(0xFFFFFFFF),
-      borderRadius: const BorderRadius.vertical(
-        top: Radius.circular(40),
-      ),
-    ),
-    child: BackdropFilter(
-      filter: ImageFilter.blur(sigmaX: 1, sigmaY: 1),
-      blendMode: BlendMode.srcIn,
-      child: child,
-    ),
-  );
 }

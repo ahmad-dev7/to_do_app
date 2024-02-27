@@ -1,9 +1,10 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
 import 'package:timeline_tile/timeline_tile.dart';
 import 'package:to_do/Services/task_services.dart';
-import 'package:to_do/components/add_task_sheet.dart';
+import 'package:to_do/pages/add_task_sheet.dart';
 import 'package:to_do/components/background_container.dart';
 import 'package:to_do/components/calendar_container.dart';
 import 'package:to_do/components/empty_task_message.dart';
@@ -33,6 +34,8 @@ class _HomePageState extends State<HomePage> {
 
   void retrieveTask(String date) {
     setState(() => taskList = TaskServices().getTask(date));
+    Future.delayed(const Duration(seconds: 1))
+        .then((value) => setState(() => ''));
   }
 
   @override
@@ -75,50 +78,50 @@ class _HomePageState extends State<HomePage> {
                   left: 0,
                   right: 0,
                   child: BackgroundContainer(
-                    child: taskList.isEmpty
-                        //* If list has no  tasks show empty state widget
-                        ? const EmptyTaskMessage(msg: 'No task at this date')
-                        //* If list has  tasks display them in a ListView
-                        : ListView.builder(
-                            itemCount: taskList.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              Tasks task = taskList[index];
-                              bool isActive = index == current;
-                              return Padding(
-                                padding: EdgeInsets.only(
-                                  // Adds padding from top for the first child
-                                  top: index == 0 ? 25 : 0,
-                                  // Adds padding from bottom for the last child
-                                  bottom: index == taskList.length - 1 ? 95 : 0,
-                                ),
-                                child: TimelineTile(
-                                  // checks if it is the first tile of timeline
-                                  isFirst: index == 0,
-                                  // checks if it is the last tile of timeline
-                                  isLast: index == taskList.length - 1,
-                                  // When container is not active
-                                  beforeLineStyle: LineStyle(
-                                    thickness: isActive ? 3 : 2,
-                                    color: getColor(task.isDone, isActive),
-                                  ),
-                                  // Returns style of the indicator line and icon
-                                  indicatorStyle: tileIndicatorStyle(
-                                    task.isDone,
-                                    isActive,
-                                  ),
-                                  // Task container
-                                  endChild: TaskContainer(
-                                    onTap: () => onTaskContainerTap(index),
-                                    isActive: isActive,
-                                    task: task,
-                                    onDelete: (taskId) => deleteTask(taskId),
-                                    onEdit: (task) => editTask(task),
-                                    onComplete: (task) => completeTask(task),
-                                  ),
-                                ).animate().slideY(),
-                              );
-                            },
-                          ),
+                    child: Visibility(
+                      visible: taskList.isNotEmpty,
+                      replacement: const EmptyTask(msg: 'No task at this date'),
+                      child: ListView.builder(
+                        itemCount: taskList.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          Tasks task = taskList[index];
+                          bool isActive = index == current;
+                          return Padding(
+                            padding: EdgeInsets.only(
+                              // Adds padding from top for the first child
+                              top: index == 0 ? 25 : 0,
+                              // Adds padding from bottom for the last child
+                              bottom: index == taskList.length - 1 ? 95 : 0,
+                            ),
+                            child: TimelineTile(
+                              // checks if it is the first tile of timeline
+                              isFirst: index == 0,
+                              // checks if it is the last tile of timeline
+                              isLast: index == taskList.length - 1,
+                              // When container is not active
+                              beforeLineStyle: LineStyle(
+                                thickness: isActive ? 3 : 2,
+                                color: getColor(task.isDone, isActive),
+                              ),
+                              // Returns style of the indicator line and icon
+                              indicatorStyle: tileIndicatorStyle(
+                                task.isDone,
+                                isActive,
+                              ),
+                              // Task container
+                              endChild: TaskContainer(
+                                onTap: () => onTaskContainerTap(index),
+                                isActive: isActive,
+                                task: task,
+                                onDelete: (taskId) => deleteTask(taskId),
+                                onEdit: (task) => editTask(task),
+                                onComplete: (task) => completeTask(task),
+                              ),
+                            ).animate().slideY(),
+                          );
+                        },
+                      ),
+                    ),
                   ),
                 ),
 
@@ -202,6 +205,7 @@ class _HomePageState extends State<HomePage> {
 
   /// Deletes the given [task id]
   void deleteTask(int taskId) {
+    AwesomeNotifications().cancel(taskId);
     TaskServices().deleteTask(taskId).then((_) {
       retrieveTask(date);
       messageAlert('Task deleted', Colors.red);

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:simple_shadow/simple_shadow.dart';
+import 'package:to_do/Services/network/quote_services.dart';
 import 'package:to_do/Services/task_services.dart';
 import 'package:to_do/components/background_container.dart';
 import 'package:to_do/pages/home_page.dart';
@@ -43,20 +44,37 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen>
       body: BackgroundContainer(
         height: double.maxFinite,
         child: Center(
-          child: SimpleShadow(
-            color: Colors.black,
-            offset: const Offset(4, 4),
-            sigma: 5,
-            child: Lottie.asset(
-              'images/splash_animation.json',
-              height: MediaQuery.of(context).size.height * 0.4,
-              controller: _controller,
-              onLoaded: (composition) {
-                _controller
-                  ..duration = composition.duration
-                  ..forward().whenComplete(navigateUser);
-              },
-            ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SimpleShadow(
+                color: Colors.black,
+                offset: const Offset(4, 4),
+                sigma: 5,
+                child: Lottie.asset(
+                  'images/splash_animation.json',
+                  height: MediaQuery.of(context).size.height * 0.4,
+                  controller: _controller,
+                  animate: true,
+                  onLoaded: (composition) {
+                    _controller
+                      ..duration = composition.duration
+                      ..forward().whenComplete(navigateUser);
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: Text(
+                  quote,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w300,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
