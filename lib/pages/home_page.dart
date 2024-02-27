@@ -177,8 +177,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   /// Edit task of given [task id]
-  void editTask(Tasks task) {
-    showModalBottomSheet(
+  Future<void> editTask(Tasks task) async {
+    await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       isDismissible: false,
@@ -194,13 +194,14 @@ class _HomePageState extends State<HomePage> {
       ),
     ).then((_) {
       retrieveTask(date);
-      messageAlert('Task edited successfully', Colors.blue);
     });
+    return Future.value(null);
   }
 
   /// Sets the given [task.isDone] of given [task id] as [true]
-  void completeTask(Tasks task) {
-    TaskServices().completeTask(task).then((value) => retrieveTask(date));
+  Future<void> completeTask(Tasks task) async {
+    await TaskServices().completeTask(task).then((value) => retrieveTask(date));
+    return Future.value(null);
   }
 
   /// Deletes the given [task id]

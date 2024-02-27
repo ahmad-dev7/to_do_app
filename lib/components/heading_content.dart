@@ -17,9 +17,9 @@ class HeadingContent extends StatelessWidget {
         Container(
           height: 30,
           margin: const EdgeInsets.only(bottom: 12),
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
           decoration: BoxDecoration(
-            color: const Color(0xE1FFFFFF),
+            color: const Color(0xDFF8F7F4),
             borderRadius: BorderRadius.circular(15),
           ),
           child: Wrap(
@@ -33,12 +33,12 @@ class HeadingContent extends StatelessWidget {
                 style: style(
                   size: 18,
                   weight: FontWeight.w400,
-                  color: const Color(0xFF000000),
+                  color: const Color(0xE0000000),
                 ),
               ),
             ],
           ),
-        ),
+        ).animate().slideX(),
         Text(
           'Completed your task ?!?!',
           style: style(

@@ -3,7 +3,8 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:simple_shadow/simple_shadow.dart';
 
 class BottomSheetIcon extends StatelessWidget {
-  const BottomSheetIcon({super.key});
+  final Widget? child;
+  const BottomSheetIcon({super.key, this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -15,10 +16,11 @@ class BottomSheetIcon extends StatelessWidget {
           offset: const Offset(10, 10),
           color: Colors.black,
           sigma: 10,
-          child: Image.asset(
-            'images/list_icon.png',
-            height: 100,
-          ),
+          child: child ??
+              Image.asset(
+                'images/list_icon.png',
+                height: 100,
+              ),
         )
             .animate()
             .fade(delay: const Duration(milliseconds: 400))

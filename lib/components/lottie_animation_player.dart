@@ -5,6 +5,7 @@ class LottieAnimationPlayer extends StatefulWidget {
   final String filePath;
   final double? height;
   final double? width;
+  final bool? repeat;
   final Function() onComplete;
   const LottieAnimationPlayer({
     super.key,
@@ -12,6 +13,7 @@ class LottieAnimationPlayer extends StatefulWidget {
     required this.onComplete,
     this.height,
     this.width,
+    this.repeat,
   });
 
   @override
@@ -28,10 +30,19 @@ class _LottieAnimationPlayerState extends State<LottieAnimationPlayer>
     super.initState();
   }
 
+  void onComplete() {
+    widget.onComplete();
+    if (widget.repeat != null) {
+      setState(() => animationController.repeat());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Lottie.asset(
       widget.filePath,
+      fit: BoxFit.fitHeight,
+      repeat: widget.repeat ?? false,
       height: widget.height ?? double.maxFinite,
       width: widget.width ?? double.maxFinite,
       controller: animationController,
@@ -39,8 +50,14 @@ class _LottieAnimationPlayerState extends State<LottieAnimationPlayer>
       onLoaded: (composition) {
         animationController
           ..duration = composition.duration
-          ..forward().whenComplete(widget.onComplete);
+          ..forward().whenComplete(onComplete);
       },
     );
+  }
+
+  @override
+  void dispose() {
+    animationController.dispose();
+    super.dispose();
   }
 }

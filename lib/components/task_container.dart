@@ -7,7 +7,7 @@ import 'package:to_do/model/tasks.dart';
 class TaskContainer extends StatefulWidget {
   final Function() onTap;
   final Future<void> Function(int id) onDelete;
-  final Function(Tasks task) onEdit, onComplete;
+  final Future<void> Function(Tasks task) onEdit, onComplete;
   final bool isActive;
   final Tasks task;
   const TaskContainer({
@@ -27,17 +27,21 @@ class TaskContainer extends StatefulWidget {
 class _TaskContainerState extends State<TaskContainer> {
   bool playDeleteAnimation = false;
   bool playCompleteAnimation = false;
+  bool playEditAnimation = false;
   void showDeleteAnimation() => setState(() => playDeleteAnimation = true);
-  void showCompleteAnimation() => setState(() => playCompleteAnimation = true);
   void removeDeleteAnimation() {
     widget.onDelete(widget.task.id).whenComplete(
           () => setState(() => playDeleteAnimation = false),
         );
   }
 
-  void removeCompleteAnimation() {
+  showCompleteAnimation() {
+    setState(() => playCompleteAnimation = true);
     widget.onComplete(widget.task);
-    setState(() => playCompleteAnimation = false);
+  }
+
+  showEditAnimation() {
+    setState(() => playEditAnimation = true);
   }
 
   @override
@@ -65,98 +69,111 @@ class _TaskContainerState extends State<TaskContainer> {
           borderRadius: BorderRadius.circular(20),
         ),
         child: Visibility(
-          maintainAnimation: true,
-          maintainSize: true,
-          maintainState: true,
           visible: !playDeleteAnimation,
           replacement: LottieAnimationPlayer(
             filePath: 'images/delete.json',
             onComplete: removeDeleteAnimation,
           ),
-          child: Stack(
-            children: [
-              // Heading
-              Positioned(
-                top: 8,
-                child: text(
-                  widget.task.heading,
-                  isActive: widget.isActive,
-                  weight: FontWeight.w600,
-                  size: 18,
-                ),
-              ),
-              // Time
-              Positioned(
-                top: 0,
-                right: 5,
-                child: text(
-                  widget.task.time,
-                  isActive: widget.isActive,
-                  weight: FontWeight.w400,
-                ),
-              ),
-              // About
-              Positioned(
-                top: 45,
-                right: 0,
-                left: 0,
-                child: text(
-                  widget.task.about,
-                  isActive: widget.isActive,
-                ),
-              ),
-              // Show delete/edit/complete buttons
-              if (widget.isActive)
+          child: Visibility(
+            visible: !playEditAnimation,
+            replacement: Padding(
+              padding: const EdgeInsets.all(25),
+              child: LottieAnimationPlayer(
+                filePath: 'images/update.json',
+                onComplete: () => setState(() => playEditAnimation = false),
+              ).animate().fade(),
+            ),
+            child: Stack(
+              children: [
+                // Heading
                 Positioned(
-                  bottom: -5,
-                  right: 0,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      //! Delete button
-                      CustomIconButton(
-                        onTap: () => showDeleteAnimation(),
-                        bgColor: widget.task.isDone
-                            ? Colors.transparent
-                            : const Color(0xFF292D2D),
-                        color: widget.task.isDone
-                            ? Colors.red
-                            : Colors.red.withOpacity(0.8),
-                        icon: widget.task.isDone
-                            ? Icons.delete_forever_sharp
-                            : Icons.delete,
-                      ),
-                      SizedBox(width: widget.task.isDone ? 0 : 20),
-                      //? Edit button
-                      Visibility(
-                        visible: !widget.task.isDone,
-                        child: CustomIconButton(
-                          onTap: () => widget.onEdit(widget.task),
-                          color: Colors.blue,
-                          icon: Icons.edit,
-                        ),
-                      ),
-                      SizedBox(width: widget.task.isDone ? 0 : 20),
-                      //* Completed button
-                      Visibility(
-                        visible: !widget.task.isDone,
-                        child: CustomIconButton(
-                          onTap: () => showCompleteAnimation(),
-                          color: Colors.green,
-                          icon: Icons.check,
-                        ),
-                      ),
-                    ],
+                  top: 8,
+                  child: text(
+                    widget.task.heading,
+                    isActive: widget.isActive,
+                    weight: FontWeight.w600,
+                    size: 18,
                   ),
-                ).animate().slideX(duration: const Duration(milliseconds: 400)),
-              Visibility(
-                visible: playCompleteAnimation,
-                child: LottieAnimationPlayer(
-                  filePath: 'images/celebration.json',
-                  onComplete: removeCompleteAnimation,
                 ),
-              )
-            ],
+                // Time
+                Positioned(
+                  top: 0,
+                  right: 5,
+                  child: text(
+                    widget.task.time,
+                    isActive: widget.isActive,
+                    weight: FontWeight.w400,
+                  ),
+                ),
+                // About
+                Positioned(
+                  top: 45,
+                  right: 0,
+                  left: 0,
+                  child: text(
+                    widget.task.about,
+                    isActive: widget.isActive,
+                  ),
+                ),
+                // Show delete/edit/complete buttons
+                if (widget.isActive)
+                  Positioned(
+                    bottom: -5,
+                    right: 0,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        //! Delete button
+                        CustomIconButton(
+                          onTap: () => showDeleteAnimation(),
+                          bgColor: widget.task.isDone
+                              ? Colors.transparent
+                              : const Color(0xFF292D2D),
+                          color: widget.task.isDone
+                              ? Colors.red
+                              : Colors.red.withOpacity(0.8),
+                          icon: widget.task.isDone
+                              ? Icons.delete_forever_sharp
+                              : Icons.delete,
+                        ),
+                        SizedBox(width: widget.task.isDone ? 0 : 20),
+                        //? Edit button
+                        Visibility(
+                          visible: !widget.task.isDone,
+                          child: CustomIconButton(
+                            onTap: () => widget
+                                .onEdit(widget.task)
+                                .whenComplete(() => showEditAnimation()),
+                            color: Colors.blue,
+                            icon: Icons.edit,
+                          ),
+                        ),
+                        SizedBox(width: widget.task.isDone ? 0 : 20),
+                        //* Completed button
+                        Visibility(
+                          visible: !widget.task.isDone,
+                          child: CustomIconButton(
+                            onTap: () => showCompleteAnimation(),
+                            color: Colors.green,
+                            icon: Icons.check,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                      .animate()
+                      .slideX(duration: const Duration(milliseconds: 400)),
+                // Completed task animation
+                Visibility(
+                  visible: playCompleteAnimation,
+                  child: LottieAnimationPlayer(
+                    filePath: 'images/celebration.json',
+                    onComplete: () =>
+                        setState(() => playCompleteAnimation = false),
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),
