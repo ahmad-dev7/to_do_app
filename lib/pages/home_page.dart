@@ -204,12 +204,13 @@ class _HomePageState extends State<HomePage> {
   }
 
   /// Deletes the given [task id]
-  void deleteTask(int taskId) {
+  Future<void> deleteTask(int taskId) async {
     AwesomeNotifications().cancel(taskId);
-    TaskServices().deleteTask(taskId).then((_) {
+    await TaskServices().deleteTask(taskId).then((_) {
       retrieveTask(date);
       messageAlert('Task deleted', Colors.red);
     });
+    return Future.value(null);
   }
 
   /// Returns either [green], [black] or [grey] color based on current state of isDone and isActive
