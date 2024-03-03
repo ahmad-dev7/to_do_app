@@ -11,6 +11,7 @@ import 'package:to_do/components/dialog_button.dart';
 import 'package:to_do/components/lottie_animation_player.dart';
 import 'package:to_do/components/sheet_container.dart';
 import 'package:to_do/components/styled_textfield.dart';
+import 'package:to_do/components/web_controller.dart';
 import 'package:to_do/model/tasks.dart';
 
 class AddTaskSheet extends StatefulWidget {
@@ -57,177 +58,181 @@ class _AddTaskSheetState extends State<AddTaskSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 400),
-      curve: Curves.fastEaseInToSlowEaseOut,
-      padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
-      child: SizedBox(
-        height: 420,
-        child: Stack(
-          children: [
-            Align(
-              alignment: AlignmentDirectional.bottomCenter,
-              //* dialog sheet
-              child: SheetContainer(
-                height: 360,
-                img: 'images/wavy_lines.jpg',
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 40),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      //* Heading textfield
-                      StyledTextField(
-                        focusNode: headingFocus,
-                        hint: 'Task heading',
-                        controller: headingController,
-                        charLength: 30,
-                      ),
-                      // About textfield
-                      StyledTextField(
-                        focusNode: aboutFocus,
-                        hint: 'About task',
-                        controller: aboutController,
-                        charLength: 150,
-                        maxLines: 2,
-                      ),
-                      //* Date and Time picker
-                      Flexible(
-                        child: Row(
-                          children: [
-                            //* Date picker button
-                            Flexible(
-                              flex: 1,
-                              child: DateTimePickerButton(
-                                onTap: () {
-                                  // remove focus from textfield
-                                  setState(() {
-                                    headingFocus.unfocus();
-                                    aboutFocus.unfocus();
-                                  });
-                                  //* Show date picker and set it's value to pickedDate
-                                  showDatePicker(
-                                    context: context,
-                                    initialDate: DateTime.now(),
-                                    firstDate: DateTime.now(),
-                                    lastDate: DateTime.now().add(
-                                      const Duration(days: 30),
-                                    ),
-                                  ).then(
-                                    (value) => setState(
-                                      () {
-                                        isDatePicked = true;
-                                        date = value!;
-                                        pickedDate = DateFormat('E, d MMM')
-                                            .format(value);
-                                      },
-                                    ),
-                                  );
-                                },
-                                label: pickedDate.isNotEmpty
-                                    ? pickedDate
-                                    : 'Due date',
-                                isPicked: isDatePicked,
-                                iconData: Icons.calendar_month,
+    return WebController(
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.fastEaseInToSlowEaseOut,
+        padding:
+            EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
+        child: SizedBox(
+          height: 420,
+          child: Stack(
+            children: [
+              Align(
+                alignment: AlignmentDirectional.bottomCenter,
+                //* dialog sheet
+                child: SheetContainer(
+                  height: 360,
+                  img: 'images/wavy_lines.jpg',
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 40),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        //* Heading textfield
+                        StyledTextField(
+                          focusNode: headingFocus,
+                          hint: 'Task heading',
+                          controller: headingController,
+                          charLength: 30,
+                        ),
+                        // About textfield
+                        StyledTextField(
+                          focusNode: aboutFocus,
+                          hint: 'About task',
+                          controller: aboutController,
+                          charLength: 150,
+                          maxLines: 2,
+                        ),
+                        //* Date and Time picker
+                        Flexible(
+                          child: Row(
+                            children: [
+                              //* Date picker button
+                              Flexible(
+                                flex: 1,
+                                child: DateTimePickerButton(
+                                  onTap: () {
+                                    // remove focus from textfield
+                                    setState(() {
+                                      headingFocus.unfocus();
+                                      aboutFocus.unfocus();
+                                    });
+                                    //* Show date picker and set it's value to pickedDate
+                                    showDatePicker(
+                                      context: context,
+                                      initialDate: DateTime.now(),
+                                      firstDate: DateTime.now(),
+                                      lastDate: DateTime.now().add(
+                                        const Duration(days: 30),
+                                      ),
+                                    ).then(
+                                      (value) => setState(
+                                        () {
+                                          isDatePicked = true;
+                                          date = value!;
+                                          pickedDate = DateFormat('E, d MMM')
+                                              .format(value);
+                                        },
+                                      ),
+                                    );
+                                  },
+                                  label: pickedDate.isNotEmpty
+                                      ? pickedDate
+                                      : 'Due date',
+                                  isPicked: isDatePicked,
+                                  iconData: Icons.calendar_month,
+                                ),
                               ),
+                              const SizedBox(width: 40),
+                              //* Time picker button
+                              Flexible(
+                                flex: 1,
+                                child: DateTimePickerButton(
+                                  onTap: () {
+                                    setState(() {
+                                      headingFocus.unfocus();
+                                      aboutFocus.unfocus();
+                                    });
+                                    showTimePicker(
+                                      context: context,
+                                      initialTime: TimeOfDay.fromDateTime(
+                                        DateTime.now().add(
+                                          const Duration(minutes: 1),
+                                        ),
+                                      ),
+                                    ).then(
+                                      (value) => setState(
+                                        () {
+                                          time = value!;
+                                          pickedTime = getTime(value);
+                                          isTimePicked = true;
+                                        },
+                                      ),
+                                    );
+                                  },
+                                  label: pickedTime.isNotEmpty
+                                      ? pickedTime
+                                      : 'Due time',
+                                  isPicked: isTimePicked,
+                                  iconData: Icons.av_timer,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        //* Add/Edit or cancel button
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            // Cancel button
+                            const DialogButton(
+                              label: 'Cancel',
+                              color: Colors.white10,
                             ),
                             const SizedBox(width: 40),
-                            //* Time picker button
-                            Flexible(
-                              flex: 1,
-                              child: DateTimePickerButton(
-                                onTap: () {
-                                  setState(() {
-                                    headingFocus.unfocus();
-                                    aboutFocus.unfocus();
-                                  });
-                                  showTimePicker(
-                                    context: context,
-                                    initialTime: TimeOfDay.fromDateTime(
-                                      DateTime.now().add(
-                                        const Duration(minutes: 1),
-                                      ),
-                                    ),
-                                  ).then(
-                                    (value) => setState(
-                                      () {
-                                        time = value!;
-                                        pickedTime = getTime(value);
-                                        isTimePicked = true;
-                                      },
-                                    ),
-                                  );
-                                },
-                                label: pickedTime.isNotEmpty
-                                    ? pickedTime
-                                    : 'Due time',
-                                isPicked: isTimePicked,
-                                iconData: Icons.av_timer,
-                              ),
+                            //! Add/Edit button
+                            DialogButton(
+                              label: widget.btnLabel ?? 'Add',
+                              color: isFieldsCompleted()
+                                  ? Colors.blue
+                                  : Colors.grey,
+                              onTap: () async {
+                                //* Check if input fields are nto empty
+                                if (isFieldsCompleted()) {
+                                  int id = taskBox.isEmpty
+                                      ? 0
+                                      : taskCount.keys.last + 1;
+                                  if (isDatePicked && isTimePicked) {
+                                    createNotification(id: widget.id ?? id);
+                                  }
+                                  addTask(id);
+                                } else {
+                                  showAlert();
+                                }
+                              },
                             ),
                           ],
                         ),
-                      ),
-                      //* Add/Edit or cancel button
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          // Cancel button
-                          const DialogButton(
-                            label: 'Cancel',
-                            color: Colors.white10,
-                          ),
-                          const SizedBox(width: 40),
-                          //! Add/Edit button
-                          DialogButton(
-                            label: widget.btnLabel ?? 'Add',
-                            color:
-                                isFieldsCompleted() ? Colors.blue : Colors.grey,
-                            onTap: () async {
-                              //* Check if input fields are nto empty
-                              if (isFieldsCompleted()) {
-                                int id = taskBox.isEmpty
-                                    ? 0
-                                    : taskCount.keys.last + 1;
-                                if (isDatePicked && isTimePicked) {
-                                  createNotification(id: widget.id ?? id);
-                                }
-                                addTask(id);
-                              } else {
-                                showAlert();
-                              }
-                            },
-                          ),
-                        ],
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ).animate().slideY(
-                  begin: MediaQuery.of(context).size.height,
-                  end: 0,
-                  curve: Curves.easeIn,
-                  duration: const Duration(milliseconds: 300),
+              ).animate().slideY(
+                    begin: MediaQuery.of(context).size.height,
+                    end: 0,
+                    curve: Curves.easeIn,
+                    duration: const Duration(milliseconds: 300),
+                  ),
+              //* To-Do icon placed at top
+              Align(
+                alignment: Alignment.topCenter,
+                child: SimpleShadow(
+                  offset: const Offset(4, 8),
+                  sigma: 4,
+                  color: Colors.grey.shade700,
+                  child: LottieAnimationPlayer(
+                    height: 100,
+                    repeat: true,
+                    filePath: 'images/write_animation.json',
+                    onComplete: () {},
+                  ).animate().slideY(begin: -50),
                 ),
-            //* To-Do icon placed at top
-            Align(
-              alignment: Alignment.topCenter,
-              child: SimpleShadow(
-                offset: const Offset(4, 8),
-                sigma: 4,
-                color: Colors.grey.shade700,
-                child: LottieAnimationPlayer(
-                  height: 100,
-                  repeat: true,
-                  filePath: 'images/write_animation.json',
-                  onComplete: () {},
-                ).animate().slideY(begin: -50),
               ),
-            ),
-            //* Alert on add action if fields are not completed
-            CustomAlert(alert: alert)
-          ],
+              //* Alert on add action if fields are not completed
+              CustomAlert(alert: alert)
+            ],
+          ),
         ),
       ),
     );

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:to_do/Services/network/quote_services.dart';
 import 'package:to_do/Services/task_services.dart';
-import 'package:to_do/components/animated_splash_screen.dart';
+import 'package:to_do/pages/animated_splash_screen.dart';
 import 'package:to_do/model/tasks.dart';
 import 'package:to_do/task_reminder.dart';
 
