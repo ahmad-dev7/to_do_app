@@ -20,26 +20,30 @@ The to-do list app helps users keep track of their tasks efficiently. Here are s
         <img src="images/demo/splash screen.jpg" alt="Splash Screen" height="300"/>
     </div>
     <div style="flex: 1; margin-right: 10px;">
-        <img src="images//demo/name input.jpg" alt="Name input" height="300"/>
+        <img src="images/demo/name input.jpg" alt="Name input" height="300"/>
     </div>
     <div style="flex: 1;">
         <img src="images/demo/task list.jpg" alt="Home Page" height="300"/>
     </div>
-    <div style="flex: 1;">
+</div>
+
+<div style="display: flex; flex-wrap: wrap;">
+    <div style="flex: 1; margin-right: 10px;">
         <img src="images/demo/add task.jpg" alt="Add Task" height="300"/>
     </div>
-    <div style="flex: 1;">
+    <div style="flex: 1; margin-right: 10px;">
         <img src="images/demo/pick date.jpg" alt="Pick Date" height="300"/>
     </div>
     <div style="flex: 1;">
         <img src="images/demo/pick time.jpg" alt="Pick Time" height="300"/>
     </div>
+</div>
+
+<div style="display: flex; flex-wrap: wrap;">
     <div style="flex: 1;">
         <img src="images/demo/pick date.jpg" alt="Pick Date" height="300"/>
     </div>
 </div>
-
-https://github.com/ahmad-dev7/weather_forecast/assets/126844715/fe9dcaef-3ba5-48d6-b46b-a4c6363b16c6
 
 ## Contribution
 
