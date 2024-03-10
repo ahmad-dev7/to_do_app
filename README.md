@@ -15,35 +15,13 @@ The to-do list app helps users keep track of their tasks efficiently. Here are s
 
 ### Screenshots
 
-<div style="display: flex; flex-wrap: wrap;">
-    <div style="flex: 1; margin-right: 10px;">
-        <img src="images/demo/splash screen.jpg" alt="Splash Screen" height="300"/>
-    </div>
-    <div style="flex: 1; margin-right: 10px;">
-        <img src="images/demo/name input.jpg" alt="Name input" height="300"/>
-    </div>
-    <div style="flex: 1;">
-        <img src="images/demo/task list.jpg" alt="Home Page" height="300"/>
-    </div>
-</div>
+<img src="images/demo/splash_screen.jpg" alt="Splash Screen" height="300"> &nbsp;&nbsp;&nbsp;&nbsp; <img src="images/demo/name_input.jpg" alt="Name Input" height="300"> &nbsp;&nbsp;&nbsp;&nbsp; <img src="images/demo/task_list.jpg" alt="Task List" height="300"> &nbsp;&nbsp;&nbsp;&nbsp; <img src="images/demo/add_task.jpg" alt="Add Task" height="300">
+<br>
+<br>
+<img src="images/demo/pick_date.jpg" alt="Pick Date" height="300"> &nbsp;&nbsp;&nbsp;&nbsp; <img src="images/demo/pick_time.jpg" alt="Pick Time" height="300"> &nbsp;&nbsp;&nbsp;&nbsp; <img src="images/demo/reminder_notification.jpg" alt="Reminder Notification" height="300"> &nbsp;&nbsp;&nbsp;&nbsp; <img src="images/demo/task_list.jpg" alt="Task List" height="300">
+<br>
 
-<div style="display: flex; flex-wrap: wrap;">
-    <div style="flex: 1; margin-right: 10px;">
-        <img src="images/demo/add task.jpg" alt="Add Task" height="300"/>
-    </div>
-    <div style="flex: 1; margin-right: 10px;">
-        <img src="images/demo/pick date.jpg" alt="Pick Date" height="300"/>
-    </div>
-    <div style="flex: 1;">
-        <img src="images/demo/pick time.jpg" alt="Pick Time" height="300"/>
-    </div>
-</div>
-
-<div style="display: flex; flex-wrap: wrap;">
-    <div style="flex: 1;">
-        <img src="images/demo/pick date.jpg" alt="Pick Date" height="300"/>
-    </div>
-</div>
+https://github.com/ahmad-dev7/to_do_app/assets/126844715/ba0b1197-6c8a-4bb4-8eaf-e8a9b9ed9fea
 
 ## Contribution
 
